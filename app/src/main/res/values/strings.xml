@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Keg Scales</string>
+    <string name="scan">Scan</string>
+    <string name="kegscales_name">KegScales Name</string>
+    <string name="keg_name">Keg Name</string>
+    <string name="updatename">Update</string>
+    <string name="volume">Volume(ml)</string>
+    <string name="volume_hint">Volume in milliliters</string>
+    <string name="updatevolume">Update</string>
+    <string name="instructions_text">Getting configuration status</string>
+    <string name="config_update_button_text">Wait...</string>
+</resources>
