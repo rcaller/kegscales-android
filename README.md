@@ -11,4 +11,4 @@ The project currently consists of the Raspberry Pi Pico communicating over BLE w
 This repository contains the source code for the android app that drives the kegscales system
 
 ### Installation
-Please apply to be a tester for the project here.  We will need testers so we can get the app into the app store.
+Please install APK
