@@ -136,6 +136,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/wifi_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:text="WiFi Config"
+            app:layout_constraintEnd_toStartOf="@+id/left"
+            app:layout_constraintStart_toEndOf="@+id/update_name"
+            tools:layout_editor_absoluteY="21dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

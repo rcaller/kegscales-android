@@ -20,6 +20,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
+import org.json.JSONObject
 import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
 import java.nio.ByteBuffer
@@ -39,6 +40,7 @@ class KegScaleConnector(val context: Context) {
     private val configStoreUUID = UUID.fromString("28f273fb-9f53-45d4-852a-bfb214442d44")
     private val configVolumeUUID = UUID.fromString("28f273fa-9f53-45d4-852a-bfb214442d44")
     private val nameUUID = UUID.fromString("28f273f9-9f53-45d4-852a-bfb214442d44")
+    private val wifiUUID = UUID.fromString("28f273f8-9f53-45d4-852a-bfb214442d44")
     private val cccdUUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     private val kegScales = HashMap<String, ConnectedKegScale>()
     private val bleScanner by lazy {
@@ -81,6 +83,7 @@ class KegScaleConnector(val context: Context) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     Log.w("BluetoothGattCallback", "Successfully connected to $deviceAddress")
                     kegScales[deviceAddress]?.connected=TRUE
+                    gatt?.requestMtu(512)
                     gatt?.discoverServices()
                     if (connectDisconnected() == false) {
                         Handler(Looper.getMainLooper()).post  {
@@ -101,6 +104,11 @@ class KegScaleConnector(val context: Context) {
                 kegScales[deviceAddress]?.gatt=null
                 connectDisconnected()
             }
+        }
+
+        override fun onMtuChanged(gatt: BluetoothGatt?, mtu: Int, status: Int) {
+            super.onMtuChanged(gatt, mtu, status)
+            Log.i("BluetoothGattCallback", "ATT MTU changed to $mtu, success: ${status == BluetoothGatt.GATT_SUCCESS}")
         }
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
@@ -315,12 +323,33 @@ class KegScaleConnector(val context: Context) {
             )
         }
     }
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @SuppressLint("MissingPermission")
+    fun setWifi(kegId: String, ssid: String, pwd: String) {
+        Log.i("WIFI", "Setting Wifi $ssid - $pwd")
+        val wifiData = mapOf("ssid" to ssid, "pwd" to pwd)
+        val wifiJson = JSONObject(wifiData)
+        Log.i("Wifi", wifiJson.toString())
+
+        val data = wifiJson.toString().toByteArray()
+        val service = kegScales[kegId]?.gatt?.getService(kegScaleUUID)
+        val characteristic = service?.getCharacteristic(wifiUUID)
+        if (characteristic != null) {
+            kegScales[kegId]?.gatt?.writeCharacteristic(
+                characteristic,
+                data,
+                BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            )
+        }
+    }
     @SuppressLint("MissingPermission")
     fun disconnectAll() {
         for (kegId in kegScales.keys) {
             kegScales[kegId]?.gatt?.disconnect()
         }
     }
+
+
 
 }
 

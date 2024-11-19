@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import kotlin.jvm.Throws
 
 
 class ConfigureDialog: DialogFragment(), KegScaleConnector.ConfigListener, View.OnClickListener {
@@ -96,6 +97,8 @@ class ConfigureDialog: DialogFragment(), KegScaleConnector.ConfigListener, View.
             }
             val nameButton: Button? = dialog?.findViewById(R.id.update_name)
             nameButton?.setOnClickListener(this)
+            val wifiButton: Button? = dialog?.findViewById(R.id.wifi_button)
+            wifiButton?.setOnClickListener(this)
             
             var leftButton: Button?= dialog?.findViewById(R.id.left)
             leftButton?.setOnClickListener(this)
@@ -161,6 +164,11 @@ class ConfigureDialog: DialogFragment(), KegScaleConnector.ConfigListener, View.
             R.id.right -> {
                 Log.i("Movebutton", "right")
                 kegOrder.moveKegRight(kegNumber)
+            }
+            R.id.wifi_button -> {
+                val dialog = WifiDialog.open(kegId, kegNumber, kegOrder, kegScaleConnector)
+                dialog.show(parentFragmentManager, WifiDialog.TAG)
+
             }
         }
 
